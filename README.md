@@ -31,3 +31,13 @@ Before deploying this app, apply the additive SQL files in `deployment/` in file
 Operations → Inventory and Stock → Supplier receipts opens the branch purchase history. Admins can open a receipt and edit or delete it using the secured correction commands. New paid stock receipts explicitly create purchase documents before posting their linked outgoing payments, and refresh the transaction and treasury views.
 
 Before deploying, apply [the additive receipt visibility SQL](deployment/20261021_stock_receipt_transaction_visibility.sql) after migration 20261020. Missing historical headers are restored without replaying payments, inventory or treasury balances; historical payment matching is not guessed. See [deployment notes](deployment/supplier-receipts.md).
+
+## Latest release: 2026-10-06
+
+Rebuilt from source commit `b496759` with Flutter 3.47.4 / Dart 3.13.3. This release includes Sentry error reporting and the checkout fix that keeps walk-in customer details on the invoice when the user lacks permission to create a customer. Production Sentry reporting is enabled; the startup test error is disabled.
+
+Validation: 19 focused checkout and Sentry tests passed; static analysis of the eight affected source/test files reported no issues; the Flutter JavaScript release build succeeded; 10 local HTTP resource checks passed. Production Supabase configuration, the public publishable key, Sentry project, cache-versioned entrypoints and release checksums were verified. No live authentication or business transaction was exercised.
+
+The Sentry and walk-in checkout changes require no database migration. The latest source also contains an additive refund-valuation migration, copied to `deployment/20261028000000_sale_refund_warranty_integrity.sql`. If it has not already been applied, review it against the existing compatible finance backend before applying it separately in Supabase. It preserves deployed behavior outside refund valuation and fails when the existing refund implementation is incompatible. This upload does not apply SQL or activate the cPanel deployment.
+
+Publish through cPanel: **Update from Remote → Deploy HEAD Commit**, then hard-refresh the app.
