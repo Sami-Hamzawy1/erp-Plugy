@@ -74,3 +74,10 @@ Built from source commit `024d2ea1214f436c25b24af6969b3cb0fa45b302` on 2026-10-0
 The SQL files are supplied for manual Supabase deployment and are excluded from cPanel's web copy. This repo upload does not execute SQL or change live records, balances or role grants. See [deployment instructions and required permissions](deployment/customer-payment-access-fixes.md).
 
 After the migrations, publish in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. Entry points use release cache version `b0d2fd5ed17c27e4`. The existing production Supabase project, public publishable key and Sentry configuration are retained; the startup test error is disabled.
+
+
+## Latest release: corrected product quantity
+
+Rebuilt the current workspace as `1.0.0+024d2ea.localf78c04bb`. Includes the local correction that displays the actual product quantity without adding 10. The source edit remains staged in the development repository. The Flutter JavaScript release build succeeded. No additional tests or live database changes were performed. Existing backend prerequisites above still apply.
+
+Publish in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. Release cache version: `beb214d749d1c9a5`.

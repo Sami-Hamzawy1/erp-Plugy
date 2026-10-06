@@ -1,8 +1,14 @@
 {
   "source_commit": "024d2ea1214f436c25b24af6969b3cb0fa45b302",
-  "app_version": "1.0.0+024d2ea",
-  "release_cache_version": "b0d2fd5ed17c27e4",
-  "built_at_client_date": "2026-10-06",
+  "source_dirty": true,
+  "source_diff_sha256": "f78c04bb360c22e8df856a711ae034afc8d68fe35625e35163a9f01acb34587a",
+  "app_version": "1.0.0+024d2ea.localf78c04bb",
   "target": "web JavaScript release",
-  "database_applied": false
+  "database_applied": false,
+  "release_cache_version": "beb214d749d1c9a5",
+  "built_at_utc": "2026-10-06T19:12:14.018602+00:00",
+  "built_at_client_date": "2026-10-06",
+  "local_changes": [
+    "lib/features/products/presentation/widgets/enhanced_product_card.dart"
+  ]
 }
