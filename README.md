@@ -6,11 +6,11 @@ Build configuration: release mode, APP_ENV=production, Supabase project https://
 
 ## Backend prerequisites
 
-Uploading these files does not apply database migrations or verify the live backend. Before activating this release, confirm the compatible operations/finance foundations and the additive migrations through 20261021_stock_receipt_transaction_visibility.sql are deployed and verified. This includes unified transactions, setup checks, treasury account locations, security hardening, expense assets, product stock editing, opening costs and salesperson commissions. Follow the deployment guides in the source workspace. Never run fresh setup on an existing database.
+Uploading these files does not apply database migrations or verify the live backend. The latest release requires the compatible operations/finance schema, authorization v2 and branch confinement through migration 27, checkout migration 29, and the five additive fixes from migration 30 through 20261103000000. Apply missing compatible migrations before activating the web release. See [customer, payment and payroll deployment instructions](deployment/customer-payment-access-fixes.md). Never run fresh setup on an existing database.
 
 ## Validation
 
-The Flutter production web build completed successfully. The latest receipt changes passed eight focused database tests and 17 Flutter tests, plus static analysis. Static entrypoint and asset checks passed before upload. Live authentication and business transactions were not tested.
+The latest Flutter JavaScript release build completed successfully. Static analysis of the affected code reported no errors or warnings; the new SQL bodies passed syntax parsing. Release file checksums were generated and checked before upload. No new runtime tests were run, and live authentication, business transactions and visual layouts were not exercised.
 
 ## cPanel deployment
 
@@ -51,3 +51,26 @@ This release includes three checkout tax modes, checkout invoice discounts, dete
 Validation: 86 focused Dart tests and three isolated PostgreSQL scenarios passed; static analysis reported no errors or warnings. The Flutter JavaScript release build completed. Ten staged HTTP resources and file checksums were verified. Arabic/English layouts, themes, narrow screens and print layouts still require visual checks before release. Live authentication and business transactions were not exercised.
 
 Production configuration matches the existing Supabase project and public publishable key. Entry points carry a release cache version. Publish in cPanel with **Update from Remote → Deploy HEAD Commit** after applying the database migration.
+
+
+## Latest release: POS permissions, full payments, installations and payroll
+
+Built from source commit `024d2ea1214f436c25b24af6969b3cb0fa45b302` on 2026-10-06. This release includes:
+
+- Dedicated Installations navigation and improved service editor and quotation-list spacing.
+- Branch-linked POS customer creation and separate global customer permissions / branch checks.
+- Transaction details with permission-filtered costs and bank selection without exposing balances.
+- Branch-aware payment methods, direct full-payment checkout, required references and optional cash change; partial payments keep their split dialog.
+- Payroll lists filtered by authorized employee branches, filter-preserving refreshes and explicit feedback when a saved salary is outside the current view.
+
+**Database compatibility must be deployed before the web app.** After the existing compatible authorization, branch and checkout migrations, apply any missing files in this order:
+
+1. [Transaction details cost redaction](deployment/20261030000000_transaction_details_cost_redaction.sql).
+2. [Customer RPC permission scope](deployment/20261031000000_customer_rpc_permission_scope.sql).
+3. [Payment account selection without balance access](deployment/20261101000000_settlement_account_selection_without_balance.sql).
+4. [Branch-aware payment method catalog](deployment/20261102000000_branch_payment_method_catalog.sql).
+5. [Branch-aware salary record reads](deployment/20261103000000_branch_salary_record_reads.sql).
+
+The SQL files are supplied for manual Supabase deployment and are excluded from cPanel's web copy. This repo upload does not execute SQL or change live records, balances or role grants. See [deployment instructions and required permissions](deployment/customer-payment-access-fixes.md).
+
+After the migrations, publish in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. Entry points use release cache version `b0d2fd5ed17c27e4`. The existing production Supabase project, public publishable key and Sentry configuration are retained; the startup test error is disabled.
