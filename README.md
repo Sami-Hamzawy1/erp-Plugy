@@ -41,3 +41,13 @@ Validation: 19 focused checkout and Sentry tests passed; static analysis of the 
 The Sentry and walk-in checkout changes require no database migration. The latest source also contains an additive refund-valuation migration, copied to `deployment/20261028000000_sale_refund_warranty_integrity.sql`. If it has not already been applied, review it against the existing compatible finance backend before applying it separately in Supabase. It preserves deployed behavior outside refund valuation and fails when the existing refund implementation is incompatible. This upload does not apply SQL or activate the cPanel deployment.
 
 Publish through cPanel: **Update from Remote → Deploy HEAD Commit**, then hard-refresh the app.
+
+## Checkout and installations v3 release
+
+This release includes three checkout tax modes, checkout invoice discounts, deterministic line/refund cent allocation, before-tax salesperson commission, invoice branch locking, eligible payment accounts and safe account removal, saved installation quotations with reusable service snapshots, and uncropped inventory pictures. Existing invoice amounts and commission snapshots remain unchanged.
+
+**Apply database compatibility changes before publishing the app.** Confirm the existing schema has migrations through 20261028000000, then apply `deployment/20261029000000_checkout_installations_v3.sql`. See [deployment instructions](deployment/checkout-installations-v3.md). Do not run fresh setup on an existing database. The SQL is not executed by cPanel or copied to public_html. No live database changes have been performed for this release.
+
+Validation: 86 focused Dart tests and three isolated PostgreSQL scenarios passed; static analysis reported no errors or warnings. The Flutter JavaScript release build completed. Ten staged HTTP resources and file checksums were verified. Arabic/English layouts, themes, narrow screens and print layouts still require visual checks before release. Live authentication and business transactions were not exercised.
+
+Production configuration matches the existing Supabase project and public publishable key. Entry points carry a release cache version. Publish in cPanel with **Update from Remote → Deploy HEAD Commit** after applying the database migration.

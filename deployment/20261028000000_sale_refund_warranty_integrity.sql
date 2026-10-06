@@ -7,6 +7,8 @@ declare definition text; old_expression text := 'original_item.sale_price - orig
  new_expression text := '(original_item.subtotal / nullif(original_item.quantity, 0) * original_sale.total / nullif((select sum(si.subtotal) from public.sale_items si where si.sale_id = original_sale_id_value), 0))';
 begin
  select pg_get_functiondef('private.complete_refund_documents_v1(jsonb,jsonb)'::regprocedure) into definition;
+ -- Fresh setup may already contain the newer persisted financial snapshots.
+ if position('original_item.financial_gross' in definition)>0 or position('private.refund_line_gross_v3' in definition)>0 then return; end if;
  if position(new_expression in definition) = 0 then
   if position(old_expression in definition) = 0 then
    raise exception 'REFUND_IMPLEMENTATION_INCOMPATIBLE: review deployed refund valuation before applying';
