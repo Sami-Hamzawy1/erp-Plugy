@@ -81,3 +81,12 @@ After the migrations, publish in cPanel with **Update from Remote → Deploy HEA
 Rebuilt the current workspace as `1.0.0+024d2ea.localf78c04bb`. Includes the local correction that displays the actual product quantity without adding 10. The source edit remains staged in the development repository. The Flutter JavaScript release build succeeded. No additional tests or live database changes were performed. Existing backend prerequisites above still apply.
 
 Publish in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. Release cache version: `beb214d749d1c9a5`.
+
+
+## Latest release: invoice refunds and bank scope — 2026-10-08
+
+Built from source commit `e2475f2373c19cdcec19e2f6f512d0e1c681ef4d` with the existing local product quantity correction retained. Includes the updated refund invoice display, creator and branch information, and bank-account refresh behavior. Five focused invoice grid tests passed and the Flutter JavaScript release build succeeded. Live authentication, business transactions and visual layouts were not exercised.
+
+The new SQL files `deployment/20261029000000_treasury_bank_scope_fix.sql` and `deployment/20261029000001_adjust_invoice_13_refund.sql` are supplied for separate review and authorized Supabase deployment. The latter changes invoice 13 and related financial records; do not run it on another environment or without reviewing its guards. Neither file was executed by this release upload. Existing backend prerequisites above still apply.
+
+Production Supabase and Sentry configuration are retained, with the startup test error disabled. Release cache version: `2a6eb257b1229dee`. Activate the app in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. A GitHub push alone does not activate the cPanel release.

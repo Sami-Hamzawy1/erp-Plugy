@@ -1,14 +1,18 @@
 {
-  "source_commit": "024d2ea1214f436c25b24af6969b3cb0fa45b302",
+  "source_commit": "e2475f2373c19cdcec19e2f6f512d0e1c681ef4d",
   "source_dirty": true,
   "source_diff_sha256": "f78c04bb360c22e8df856a711ae034afc8d68fe35625e35163a9f01acb34587a",
-  "app_version": "1.0.0+024d2ea.localf78c04bb",
+  "app_version": "1.0.0",
   "target": "web JavaScript release",
   "database_applied": false,
-  "release_cache_version": "beb214d749d1c9a5",
-  "built_at_utc": "2026-10-06T19:12:14.018602+00:00",
-  "built_at_client_date": "2026-10-06",
+  "release_cache_version": "2a6eb257b1229dee",
+  "built_at_utc": "2026-10-08T14:54:24.554345+00:00",
+  "built_at_client_date": "2026-10-08",
   "local_changes": [
     "lib/features/products/presentation/widgets/enhanced_product_card.dart"
-  ]
+  ],
+  "validation": {
+    "invoice_grid_tests_passed": 5,
+    "release_build": "passed"
+  }
 }
