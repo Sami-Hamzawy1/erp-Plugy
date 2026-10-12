@@ -10,7 +10,7 @@ Uploading these files does not apply database migrations or verify the live back
 
 ## Validation
 
-The latest Flutter JavaScript release build completed successfully. Static analysis of the affected code reported no errors or warnings; the new SQL bodies passed syntax parsing. Release file checksums were generated and checked before upload. No new runtime tests were run, and live authentication, business transactions and visual layouts were not exercised.
+The current release was built from shared source `a07b8ea` with Flutter 3.47.4. Thirty focused checkout/cart tests passed for each brand; three isolated database scenarios verified salesperson checkout, commission, stock-shortage rollback and branch access. Both GitHub brand checks passed. Production Supabase and Sentry settings are preserved. Live authentication and business transactions were not exercised.
 
 ## cPanel deployment
 
@@ -90,3 +90,11 @@ Built from source commit `e2475f2373c19cdcec19e2f6f512d0e1c681ef4d` with the exi
 The new SQL files `deployment/20261029000000_treasury_bank_scope_fix.sql` and `deployment/20261029000001_adjust_invoice_13_refund.sql` are supplied for separate review and authorized Supabase deployment. The latter changes invoice 13 and related financial records; do not run it on another environment or without reviewing its guards. Neither file was executed by this release upload. Existing backend prerequisites above still apply.
 
 Production Supabase and Sentry configuration are retained, with the startup test error disabled. Release cache version: `2a6eb257b1229dee`. Activate the app in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. A GitHub push alone does not activate the cPanel release.
+
+## Latest release: sales checkout stock fix — 2026-10-12
+
+Built from shared source `a07b8ea5ab3fc7725515028dca872064f81cc7fc`. Sales confirmation now uses the existing atomic checkout RPC for exact product IDs and branch stock. A filtered or failed catalog read can no longer falsely block a valid sale as “out of stock.” Actual shortages and unauthorized branches remain blocked. No SQL migration is required for this checkout fix.
+
+This build also contains the unified Plugy receipt features: product/charger photos, editable receipt text and warranty years, selected optional items in the total, and saved drag-and-drop item order. If not already applied, run [the additive receipt text migration](deployment/20261105000000_installation_receipt_text.sql) in Plugy's SQL Editor to enable saving the new receipt customizations. This upload does not apply SQL or change backend identities, users or records.
+
+Release entrypoints use cache version `56a6030219616537` and clear the previous Flutter offline caches. Offline service-worker caching is disabled. Activate this release in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. The GitHub upload alone does not activate the live hosting deployment.

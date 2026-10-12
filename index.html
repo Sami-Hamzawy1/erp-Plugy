@@ -19,7 +19,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="PLUGY EV ERP — sales, inventory, and invoicing.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -35,7 +35,32 @@
 </head>
 
 <body>
-  <script src="flutter_bootstrap.js?v=2a6eb257b1229dee" async></script>
+  <script>
+  // Retire the previous Flutter offline cache before loading this release.
+  (async function () {
+    try {
+      const scope = new URL('./', document.baseURI).href;
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.filter(registration => {
+          const worker = registration.active || registration.waiting || registration.installing;
+          return registration.scope === scope && worker &&
+            new URL(worker.scriptURL).pathname === new URL('flutter_service_worker.js', scope).pathname;
+        }).map(registration => registration.unregister()));
+      }
+      if ('caches' in window) {
+        await Promise.all(['flutter-app-cache', 'flutter-temp-cache', 'flutter-app-manifest']
+          .map(name => caches.delete(name)));
+      }
+    } catch (error) {
+      console.warn('Could not clear the previous Flutter cache', error);
+    }
+    const script = document.createElement('script');
+    script.src = 'flutter_bootstrap.js?v=56a6030219616537';
+    script.async = true;
+    document.body.appendChild(script);
+  })();
+  </script>
 </body>
 
 </html>

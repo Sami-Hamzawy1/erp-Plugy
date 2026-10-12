@@ -1,18 +1,22 @@
 {
-  "source_commit": "e2475f2373c19cdcec19e2f6f512d0e1c681ef4d",
-  "source_dirty": true,
-  "source_diff_sha256": "f78c04bb360c22e8df856a711ae034afc8d68fe35625e35163a9f01acb34587a",
-  "app_version": "1.0.0",
+  "brand": "plugy",
+  "source_commit": "a07b8ea5ab3fc7725515028dca872064f81cc7fc",
+  "source_dirty": false,
+  "previous_production_commit": "0484afec325bed27fbf5fbc2339cacfa403e01ef",
   "target": "web JavaScript release",
   "database_applied": false,
-  "release_cache_version": "2a6eb257b1229dee",
-  "built_at_utc": "2026-10-08T14:54:24.554345+00:00",
-  "built_at_client_date": "2026-10-08",
-  "local_changes": [
-    "lib/features/products/presentation/widgets/enhanced_product_card.dart"
-  ],
+  "supabase_project_ref": "orbovqzenjlyshhiuofx",
+  "release_cache_version": "56a6030219616537",
+  "built_at_utc": "2026-10-12T16:19:02.729012+00:00",
+  "built_at_client_date": "2026-10-12",
   "validation": {
-    "invoice_grid_tests_passed": 5,
-    "release_build": "passed"
-  }
+    "focused_tests_passed_per_brand": 30,
+    "database_scenarios_passed": 3,
+    "github_brand_checks": "passed",
+    "release_build": "passed",
+    "http_resources_passed": 10,
+    "cache_retirement": "passed",
+    "checksums": "passed"
+  },
+  "database_note": "The sales checkout fix needs no SQL changes. Installation receipt text/order requires the included additive migration if not already applied."
 }
