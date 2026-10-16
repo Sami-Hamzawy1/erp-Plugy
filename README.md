@@ -4,6 +4,29 @@ This repository contains the compiled Flutter web application. Serve this direct
 
 Build configuration: release mode, APP_ENV=production, Supabase project https://orbovqzenjlyshhiuofx.supabase.co. Only the public Supabase publishable key is included in the browser bundle.
 
+## Release: branch creation fix — October 16, 2026
+
+Built from Plugy source `6a64261`, including shared fix `187b140`. Branch creation
+uses a permission-checked database command. The form waits for save completion,
+retains entered values on failure, and shows Arabic/English messages for duplicate
+branch codes and main warehouses.
+
+Before cPanel deployment, apply
+[the additive branch creation migration](deployment/20261107000000_create_location.sql)
+to Plugy's existing Supabase project `orbovqzenjlyshhiuofx`, unless already applied.
+The owner will apply this SQL manually. Git pushes and cPanel file copies do not
+execute SQL. The migration preserves records, balances and branch memberships;
+never rerun fresh setup on this existing production database. Existing backend
+prerequisites below still apply.
+
+The release web build succeeded; all 28 affected Flutter tests passed with Plugy
+configuration and branch database regressions passed locally. Backend identity,
+branding, generated assets, checksums and staged HTTP resources were verified.
+Live authenticated transactions were not exercised. Production cPanel settings,
+the relative base URL and offline-cache cleanup are retained. Release cache
+version: `1fa00c5ffdae4c07`. Activate in cPanel with **Update from Remote → Deploy HEAD
+Commit** after applying SQL.
+
 ## Backend prerequisites
 
 Uploading these files does not apply database migrations or verify the live backend. The latest release requires the compatible operations/finance schema, authorization v2 and branch confinement through migration 27, checkout migration 29, and the five additive fixes from migration 30 through 20261103000000. Apply missing compatible migrations before activating the web release. See [customer, payment and payroll deployment instructions](deployment/customer-payment-access-fixes.md). Never run fresh setup on an existing database.
