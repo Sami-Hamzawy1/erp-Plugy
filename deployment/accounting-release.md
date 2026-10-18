@@ -7,6 +7,28 @@ product cost allocation, expense classifications, scoped permissions and audit.
 
 ## Database prerequisite
 
+Apply these files in order in **Plugy’s Supabase SQL Editor**:
+
+1. [Checkout-v3 authorization registration](20261104000000_checkout_v3_access_registration.sql).
+2. [Integrated accounting](20261106000000_integrated_accounting.sql).
+
+The registration prerequisite is safe to repeat. It registers the existing checked
+checkout endpoints with the authorization coverage audit and restores the service
+catalog's restrictive read policy. It does not remove access checks, broaden role
+grants or modify business records.
+
+### If accounting fails with `ACCESS_UNGUARDED_RPC:public.installation_services_v3(jsonb)`
+
+The registration prerequisite is missing from that database. Apply file 1 above,
+then rerun the **entire** accounting file. A full-file accounting run uses a single
+transaction; the reported coverage failure rolls that transaction back. Keep the
+coverage check in place.
+
+This exact missing-prerequisite state was reproduced in isolated PostgreSQL. The
+registration prerequisite, including a repeated application, restored coverage
+without changing the service function implementation. The accounting migration
+and existing SQL scenarios then passed. No live database was modified.
+
 Before activating the updated client, review and apply
 [the additive accounting migration](20261106000000_integrated_accounting.sql) separately in Plugy's existing
 Supabase project, if it has not already been applied. The migration requires the

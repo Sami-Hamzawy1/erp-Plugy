@@ -24,7 +24,8 @@
     "staged_browser_subpath": "passed",
     "versioned_entrypoints": "passed",
     "cache_retirement": "passed",
-    "checksums": "passed"
+    "checksums": "passed",
+    "missing_checkout_registration_regression": "passed: reported failure reproduced, transaction rollback confirmed, registration repeat checked, accounting SQL scenarios passed"
   },
-  "database_note": "Accounting requires the included additive migration and permission grants. Apply missing prerequisites separately; no SQL is run by cPanel."
+  "database_note": "Apply checkout-v3 access registration (20261104) before integrated accounting (20261106), with existing prerequisites installed. Registration is safe to repeat. No SQL is run by GitHub or cPanel."
 }

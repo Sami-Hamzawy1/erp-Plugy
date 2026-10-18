@@ -10,9 +10,11 @@ Built from shared source `d7b3274` using Plugy's configuration. Adds P&L,
 monthly budgets, balance sheet/assets, cash flow, product costing, independent
 expense classifications, scoped accounting permissions and audit records.
 
-**Before activation:** review/apply the included
-[additive accounting migration](deployment/20261106000000_integrated_accounting.sql) separately, if missing,
-and grant accounting permissions. Historical expense classifications, asset
+**Before activation:** apply the
+[checkout API registration prerequisite](deployment/20261104000000_checkout_v3_access_registration.sql)
+first, then the [additive accounting migration](deployment/20261106000000_integrated_accounting.sql)
+if missing, and grant accounting permissions. The registration prerequisite fixes
+`ACCESS_UNGUARDED_RPC:public.installation_services_v3(jsonb)` and is safe to repeat. Historical expense classifications, asset
 schedules and opening balances require admin review. No SQL was executed by this
 upload. See [accounting deployment notes](deployment/accounting-release.md) for
 prerequisites, validation and remaining requirements limits.
