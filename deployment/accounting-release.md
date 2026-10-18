@@ -62,3 +62,10 @@ web release built successfully; staged browser/resource checks are recorded in
 After prerequisites are ready, activate using cPanel Git Version Control:
 **Update from Remote → Deploy HEAD Commit**. A GitHub push alone does not activate
 the hosted website. The live deployment has not been verified by this upload.
+
+## Expense reversal follow-up
+
+If the Expenses delete action fails, review and apply the
+[additive parameter-scope repair](20261108000000_expense_void_parameter_scope.sql).
+It preserves the existing permission wrapper and reversal history.
+See [the repair notes](expense-void-fix.md) for verified behavior.

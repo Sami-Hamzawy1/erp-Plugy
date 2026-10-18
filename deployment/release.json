@@ -27,5 +27,13 @@
     "checksums": "passed",
     "missing_checkout_registration_regression": "passed: reported failure reproduced, transaction rollback confirmed, registration repeat checked, accounting SQL scenarios passed"
   },
-  "database_note": "Apply checkout-v3 access registration (20261104) before integrated accounting (20261106), with existing prerequisites installed. Registration is safe to repeat. No SQL is run by GitHub or cPanel."
+  "database_note": "Apply checkout-v3 access registration (20261104) before integrated accounting (20261106), with existing prerequisites installed. Registration is safe to repeat. No SQL is run by GitHub or cPanel.",
+  "database_repairs": [
+    {
+      "migration": "20261108000000_expense_void_parameter_scope.sql",
+      "source_commit": "54d4cd8332b41c59f991b2dd67e3b8ec7e206f23",
+      "applied": false,
+      "validation": "old error reproduced; fresh and additive-upgrade SQL scenarios passed; repeat application, payment restoration, retry, audit and permission checks passed"
+    }
+  ]
 }

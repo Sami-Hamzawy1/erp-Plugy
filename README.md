@@ -1,5 +1,15 @@
 # PLUGY EV — production web build
 
+## SQL repair: expense deletion — October 18, 2026
+
+For expense reversal failures, apply the
+[expense parameter-scope repair](deployment/20261108000000_expense_void_parameter_scope.sql) in Plugy's Supabase SQL Editor,
+then retry. It fixes the obsolete parameter reference inside the private
+permission-wrapper implementation. Expense history, treasury reversals and
+permission checks are preserved. See [verification and deployment notes](deployment/expense-void-fix.md).
+The frontend files and cPanel configuration are unchanged; this upload does not
+apply SQL to production.
+
 This repository contains the compiled Flutter web application. Serve this directory using an HTTPS static web host. The relative base URL supports both a domain root and a repository subpath; use a trailing slash for the application URL.
 
 Build configuration: release mode, APP_ENV=production, Supabase project https://orbovqzenjlyshhiuofx.supabase.co. Only the public Supabase publishable key is included in the browser bundle.
