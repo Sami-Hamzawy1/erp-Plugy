@@ -4,6 +4,24 @@ This repository contains the compiled Flutter web application. Serve this direct
 
 Build configuration: release mode, APP_ENV=production, Supabase project https://orbovqzenjlyshhiuofx.supabase.co. Only the public Supabase publishable key is included in the browser bundle.
 
+## Release: integrated accounting — October 18, 2026
+
+Built from shared source `d7b3274` using Plugy's configuration. Adds P&L,
+monthly budgets, balance sheet/assets, cash flow, product costing, independent
+expense classifications, scoped accounting permissions and audit records.
+
+**Before activation:** review/apply the included
+[additive accounting migration](deployment/20261106000000_integrated_accounting.sql) separately, if missing,
+and grant accounting permissions. Historical expense classifications, asset
+schedules and opening balances require admin review. No SQL was executed by this
+upload. See [accounting deployment notes](deployment/accounting-release.md) for
+prerequisites, validation and remaining requirements limits.
+
+The existing cPanel path, relative base URL and offline-cache cleanup are
+preserved. Cache version: `e3ff3006d10b8903`. GitHub upload is separate from cPanel
+activation: **Update from Remote → Deploy HEAD Commit** after prerequisites are
+ready.
+
 ## Release: branch creation fix — October 16, 2026
 
 Built from Plugy source `6a64261`, including shared fix `187b140`. Branch creation
@@ -33,7 +51,13 @@ Uploading these files does not apply database migrations or verify the live back
 
 ## Validation
 
-The current release was built from shared source `a07b8ea` with Flutter 3.47.4. Thirty focused checkout/cart tests passed for each brand; three isolated database scenarios verified salesperson checkout, commission, stock-shortage rollback and branch access. Both GitHub brand checks passed. Production Supabase and Sentry settings are preserved. Live authentication and business transactions were not exercised.
+The current accounting release was built with Flutter 3.47.4 / Dart 3.13.3.
+92 focused tests passed per brand; each app branch also passed 7 configuration
+tests. Isolated SQL scenarios and focused accounting/expense static analysis
+passed. GitHub checks passed on the shared and both app branches. The production
+web build succeeded. Staged browser, HTTP resources, cache handling and checksums
+are verified before this release commit. No live authenticated business
+transactions or live database modifications were performed.
 
 ## cPanel deployment
 
