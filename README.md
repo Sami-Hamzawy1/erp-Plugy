@@ -1,5 +1,19 @@
 # PLUGY EV — production web build
 
+## Latest release: desktop Accounting, refunds and payment fees
+
+The Plugy production repository is **https://github.com/Sami-Hamzawy1/erp-Plugy**.
+Built from Plugy source `8449be419221299a58fd32d0dd9c6f247e922550`.
+
+- Restores Accounting in the desktop Finance menu, including the collapsed sidebar, with existing permissions preserved.
+- Includes balance sheet improvements, corrected refund calculations and sales summaries, configurable Visa/Instapay fees, and protected bank deletion.
+- The production build passed; desktop navigation checks passed under both brand configurations, and 39 focused Plugy release tests passed. Entry files and assets passed local HTTP checks. Live authentication and transactions were not tested.
+- The three additive migrations `20261109000000_refund_correctness.sql`, `20261110000000_checkout_payment_fees.sql` and `20261111000000_balance_sheet_classification.sql` were reported applied by the owner. This upload does not execute SQL or independently verify the live database. Preserve the earlier prerequisites below.
+- cPanel activation remains **Update from Remote → Deploy HEAD Commit**. Deployment configuration, cache retirement and versioned entrypoints are preserved.
+
+See `deployment/release.json` for build provenance and validation. Earlier release notes follow.
+
+
 ## SQL repair: expense deletion — October 18, 2026
 
 For expense reversal failures, apply the

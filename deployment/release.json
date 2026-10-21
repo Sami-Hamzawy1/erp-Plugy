@@ -1,30 +1,29 @@
 {
   "brand": "plugy",
-  "source_commit": "54d4cd8332b41c59f991b2dd67e3b8ec7e206f23",
-  "source_dirty": false,
-  "brand_source_commit": "a9e9b7b71cf5bbe51d24c1c817ebf264ca7682b4",
-  "previous_production_commit": "8437ae6a3885c12cea0f913c0e2d4721bf3c4293",
-  "target": "web JavaScript release",
-  "database_applied": false,
-  "supabase_project_ref": "orbovqzenjlyshhiuofx",
-  "release_cache_version": "b4db69bfdb34b8ce",
-  "built_at_utc": "2026-10-18T16:25:56.531891+00:00",
-  "built_at_client_date": "2026-10-18",
-  "cpanel_activated": false,
+  "source_repository": "https://github.com/Desha29/bayaa-platform",
+  "source_revision": "8449be419221299a58fd32d0dd9c6f247e922550",
+  "shared_revision": "4cc45c4dc05db0a210ed037e6a4c0027caa6a84b",
+  "built_at_utc": "2026-10-20T23:57:55.564212+00:00",
+  "environment": "production",
+  "platform": "web",
+  "base_href": "./",
   "validation": {
-    "release_build": "passed",
-    "brand_and_backend": "passed",
-    "accounting_in_bundle": "passed",
-    "versioned_entrypoints": "passed",
-    "staged_browser": "passed: PLUGY EV mounted without page errors"
+    "merged_plugy_tests_passed": 39,
+    "desktop_navigation_tests_per_brand": 10,
+    "brands_tested": [
+      "evox",
+      "plugy"
+    ],
+    "local_http_asset_checks_passed": 15,
+    "backend_selection_checked": true,
+    "live_backend_verified": false,
+    "versioned_entrypoints_checked": true
   },
-  "database_note": "Apply checkout-v3 access registration (20261104) before integrated accounting (20261106), with existing prerequisites installed. Registration is safe to repeat. No SQL is run by GitHub or cPanel.",
-  "database_repairs": [
-    {
-      "migration": "20261108000000_expense_void_parameter_scope.sql",
-      "source_commit": "54d4cd8332b41c59f991b2dd67e3b8ec7e206f23",
-      "applied": false,
-      "validation": "old error reproduced; fresh and additive-upgrade SQL scenarios passed; repeat application, payment restoration, retry, audit and permission checks passed"
-    }
-  ]
+  "database_migrations": "Reported applied by project owner; not executed during this upload.",
+  "hosting_activation": "Manual cPanel Update from Remote, then Deploy HEAD Commit.",
+  "main_dart_js_sha256": "4c6bfc2db12decf9f24507b0c991675c69f5ecebe30d956ee077a596e48255c4",
+  "production_repository": "https://github.com/Sami-Hamzawy1/erp-Plugy",
+  "release_cache_version": "4c6bfc2db12decf9",
+  "cpanel_activated": false,
+  "previous_production_commit": "150b094735e307ca5cb6822273b2c4fdddf0176d"
 }

@@ -1,0 +1,30 @@
+{
+  "brand": "plugy",
+  "source_commit": "54d4cd8332b41c59f991b2dd67e3b8ec7e206f23",
+  "source_dirty": false,
+  "brand_source_commit": "a9e9b7b71cf5bbe51d24c1c817ebf264ca7682b4",
+  "previous_production_commit": "8437ae6a3885c12cea0f913c0e2d4721bf3c4293",
+  "target": "web JavaScript release",
+  "database_applied": false,
+  "supabase_project_ref": "orbovqzenjlyshhiuofx",
+  "release_cache_version": "b4db69bfdb34b8ce",
+  "built_at_utc": "2026-10-18T16:25:56.531891+00:00",
+  "built_at_client_date": "2026-10-18",
+  "cpanel_activated": false,
+  "validation": {
+    "release_build": "passed",
+    "brand_and_backend": "passed",
+    "accounting_in_bundle": "passed",
+    "versioned_entrypoints": "passed",
+    "staged_browser": "passed: PLUGY EV mounted without page errors"
+  },
+  "database_note": "Apply checkout-v3 access registration (20261104) before integrated accounting (20261106), with existing prerequisites installed. Registration is safe to repeat. No SQL is run by GitHub or cPanel.",
+  "database_repairs": [
+    {
+      "migration": "20261108000000_expense_void_parameter_scope.sql",
+      "source_commit": "54d4cd8332b41c59f991b2dd67e3b8ec7e206f23",
+      "applied": false,
+      "validation": "old error reproduced; fresh and additive-upgrade SQL scenarios passed; repeat application, payment restoration, retry, audit and permission checks passed"
+    }
+  ]
+}
