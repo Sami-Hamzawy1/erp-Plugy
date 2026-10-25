@@ -1,0 +1,31 @@
+{
+  "brand": "plugy",
+  "environment": "production",
+  "platform": "web",
+  "production_repository": "https://github.com/Sami-Hamzawy1/erp-Plugy",
+  "source_repository": "https://github.com/Desha29/bayaa-platform",
+  "source_revision": "917ebe4c5c723117b525d628f02c9683542488f6",
+  "source_branch": "codex/plugy-production-installations",
+  "shared_revision": "566f207",
+  "previous_production_commit": "fadd8c261bcf433002f00f5c6ffaf3d3545c920e",
+  "built_at_utc": "2026-10-25T01:24:32.193897+00:00",
+  "base_href": "./",
+  "supabase_project_ref": "orbovqzenjlyshhiuofx",
+  "main_dart_js_sha256": "6e7516c1f8bb6dccc2a36607e9253a2b7c5f15795e91d3674c4e5f3fbbf9e2aa",
+  "release_cache_version": "6e7516c1f8bb6dcc",
+  "validation": {
+    "focused_production_tests_passed": 49,
+    "production_brand_and_backend_verified": true,
+    "test_backend_excluded": true,
+    "server_secret_scan_passed": true,
+    "production_backend_setup_complete": true,
+    "required_installation_rpc_probes": "Existing endpoints reject anonymous calls with 42501, as expected.",
+    "live_authenticated_workflows_tested": false,
+    "local_http_asset_checks_passed": 14,
+    "versioned_entrypoints_checked": true,
+    "evox_configuration_and_installation_tests_passed": 14
+  },
+  "database_migrations": "No SQL executed. Review the included read-only preflight before any missing additive migrations.",
+  "hosting_activation": "cPanel: Update from Remote, then Deploy HEAD Commit.",
+  "cpanel_activated": false
+}

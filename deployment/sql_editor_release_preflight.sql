@@ -60,7 +60,13 @@ with probes(step,file,kind,object_name,detail) as (values
  (15,'20261111000000_balance_sheet_classification.sql','function','public.accounting_ledger_v1(jsonb)',''),
  (16,'20261112000000_separate_installation_financials.sql','function','public.installation_financials_v1(jsonb)',''),
  (16,'20261112000000_separate_installation_financials.sql','function','public.invoice_installation_links_v1(jsonb)',''),
- (16,'20261112000000_separate_installation_financials.sql','function','private.accounting_report_classified_v2(jsonb)','')
+ (16,'20261112000000_separate_installation_financials.sql','function','private.accounting_report_classified_v2(jsonb)',''),
+ (17,'20261112000000_global_installation_inventory.sql','table','public.installation_inventory',''),
+ (17,'20261112000000_global_installation_inventory.sql','function','public.installation_inventory_v1(jsonb)',''),
+ (17,'20261112000000_global_installation_inventory.sql','column','public.sale_items','installation_inventory_id'),
+ (18,'20261113000000_detailed_sale_audit.sql','function','public.read_audit_events_v1(jsonb)',''),
+ (18,'20261113000000_detailed_sale_audit.sql','function','private.record_sale_audit_v1()',''),
+ (18,'20261113000000_detailed_sale_audit.sql','table','private.audit_sale_contacts_v1','')
 ), checked as (
  select *,case kind
   when 'table' then to_regclass(object_name) is not null

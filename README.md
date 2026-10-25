@@ -1,5 +1,17 @@
 # PLUGY EV — production web build
 
+## Latest release: installation stock, bank controls and audit updates
+
+Source `9ae575cf97eadc2d1fb94c5872fba859b1d6a582`. Production backend preserved. 109 Plugy and 25 EVOX checks passed.
+
+Includes the separate installation stock pool, bank deletion/deactivation, detailed sale audit, image/user fixes and separate installation financials.
+
+**Database action required:** installation inventory and detailed audit RPCs were absent in the production API cache. Review the included additive SQL before activation.
+
+See [deployment details](deployment/shared-stock-release.md). Activate in cPanel: **Update from Remote -> Deploy HEAD Commit**.
+
+## Earlier release notes
+
 ## Latest release: separate EV installation financials
 
 Built from Plugy production source `917ebe4c5c723117b525d628f02c9683542488f6`. The existing production backend and public key are preserved.
