@@ -1,29 +1,31 @@
 {
   "brand": "plugy",
-  "source_repository": "https://github.com/Desha29/bayaa-platform",
-  "source_revision": "8449be419221299a58fd32d0dd9c6f247e922550",
-  "shared_revision": "4cc45c4dc05db0a210ed037e6a4c0027caa6a84b",
-  "built_at_utc": "2026-10-20T23:57:55.564212+00:00",
   "environment": "production",
   "platform": "web",
-  "base_href": "./",
-  "validation": {
-    "merged_plugy_tests_passed": 39,
-    "desktop_navigation_tests_per_brand": 10,
-    "brands_tested": [
-      "evox",
-      "plugy"
-    ],
-    "local_http_asset_checks_passed": 15,
-    "backend_selection_checked": true,
-    "live_backend_verified": false,
-    "versioned_entrypoints_checked": true
-  },
-  "database_migrations": "Reported applied by project owner; not executed during this upload.",
-  "hosting_activation": "Manual cPanel Update from Remote, then Deploy HEAD Commit.",
-  "main_dart_js_sha256": "4c6bfc2db12decf9f24507b0c991675c69f5ecebe30d956ee077a596e48255c4",
   "production_repository": "https://github.com/Sami-Hamzawy1/erp-Plugy",
-  "release_cache_version": "4c6bfc2db12decf9",
-  "cpanel_activated": false,
-  "previous_production_commit": "150b094735e307ca5cb6822273b2c4fdddf0176d"
+  "source_repository": "https://github.com/Desha29/bayaa-platform",
+  "source_revision": "917ebe4c5c723117b525d628f02c9683542488f6",
+  "source_branch": "codex/plugy-production-installations",
+  "shared_revision": "566f207",
+  "previous_production_commit": "fadd8c261bcf433002f00f5c6ffaf3d3545c920e",
+  "built_at_utc": "2026-10-25T01:24:32.193897+00:00",
+  "base_href": "./",
+  "supabase_project_ref": "orbovqzenjlyshhiuofx",
+  "main_dart_js_sha256": "6e7516c1f8bb6dccc2a36607e9253a2b7c5f15795e91d3674c4e5f3fbbf9e2aa",
+  "release_cache_version": "6e7516c1f8bb6dcc",
+  "validation": {
+    "focused_production_tests_passed": 49,
+    "production_brand_and_backend_verified": true,
+    "test_backend_excluded": true,
+    "server_secret_scan_passed": true,
+    "production_backend_setup_complete": true,
+    "required_installation_rpc_probes": "Existing endpoints reject anonymous calls with 42501, as expected.",
+    "live_authenticated_workflows_tested": false,
+    "local_http_asset_checks_passed": 14,
+    "versioned_entrypoints_checked": true,
+    "evox_configuration_and_installation_tests_passed": 14
+  },
+  "database_migrations": "No SQL executed. Review the included read-only preflight before any missing additive migrations.",
+  "hosting_activation": "cPanel: Update from Remote, then Deploy HEAD Commit.",
+  "cpanel_activated": false
 }

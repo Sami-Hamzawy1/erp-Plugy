@@ -1,5 +1,19 @@
 # PLUGY EV — production web build
 
+## Latest release: separate EV installation financials
+
+Built from Plugy production source `917ebe4c5c723117b525d628f02c9683542488f6`. The existing production backend and public key are preserved.
+
+- Adds installation revenue, costs, profit, refunds, deposits and balances inside Installations -> Financials.
+- Excludes installation invoices and their refunds from ordinary sales/profit, dashboard and shift summaries.
+- Passed 49 focused production tests. Release backend/branding, test-backend exclusion and server-secret checks passed.
+- The required installation RPCs are present in production and deny anonymous calls. No database changes or authenticated business transactions were performed.
+- Activate in cPanel with **Update from Remote -> Deploy HEAD Commit**. Existing deployment settings and cache cleanup are preserved.
+
+See [release notes](deployment/installation-financials-release.md) and `deployment/release.json`.
+
+## Earlier release notes
+
 ## Latest release: desktop Accounting, refunds and payment fees
 
 The Plugy production repository is **https://github.com/Sami-Hamzawy1/erp-Plugy**.
