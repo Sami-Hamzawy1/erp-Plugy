@@ -1,17 +1,16 @@
 {
   "brand": "plugy",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
-  "release_cache_version": "6e57d7e2877501dc",
-  "built_at_utc": "2026-11-05T17:50:41.390010+00:00",
-  "source_revision": "86d10530449d6321bd714be65748939ce7cbfee3",
+  "release_cache_version": "99d25a7f3df16b74",
+  "built_at_utc": "2026-11-05T20:00:57.159304+00:00",
+  "source_revision": "15f9f4550edae7809ddf1c1b27b9502221d3a89e",
   "source_has_uncommitted_changes": true,
-  "changes": "Fix header title width allocation clipping trailing buttons; preserve Cairo clock and current production features",
   "database_changes_applied": false,
   "environment": "production",
   "platform": "web",
   "base_href": "./",
-  "previous_production_commit": "259ecceab6b667d164037a91cbca299f99a2f7a4",
-  "main_dart_js_sha256": "6e57d7e2877501dcce37a0fd07850d3d1660aef9f5c48cb3714d7636804cfddf",
+  "previous_production_commit": "c39974e58941a5625e721fc9f6b66da378acaf53",
+  "main_dart_js_sha256": "99d25a7f3df16b746aad888080361e8c5800d08581f1554651632955cee9a8cb",
   "sql_update_file": "deployment/plugy_production_update_20261105.sql",
   "sql_update_sha256": "961b951a16b6d03168b83775d83077d8e0dcc77a40a334a4c9f6ccd71dec94e1",
   "source_file_sha256": {
@@ -28,7 +27,7 @@
     "lib/features/dashboard/presentation/widgets/egypt_clock.dart": "3f0bd32547a4c537360e0f5c8d71965693dd9a58befd178d3590e997fc1d77be",
     "lib/features/expenses/data/asset_photo_repository.dart": "e8c36d930e380abb2fd2048778415db0195c0b4a387568ac83cadc97f5f8f93a",
     "lib/features/expenses/presentation/widgets/asset_photos_dialog.dart": "48a1c70f82981143505c3ce249a6a10d3183dd78ae43405f81046efa109f5dda",
-    "lib/features/operations/domain/audit_description.dart": "5d9753bf408ffeefcb0a10a5df87236fd07214921f42463469f523788c12e7f8",
+    "lib/features/operations/domain/audit_description.dart": "1b437cea2c9abc1e830bba3be338ea435aa779109cc1cd559e84ab033c397956",
     "lib/features/operations/presentation/sections/loans_section.dart": "803a5b085601d51ed05b3d1780f4ee578cd668793bf64f657d35e64d752d2f23",
     "lib/features/operations/presentation/widgets/stock_product_picker.dart": "4f721233e974bbd8501777dc7c31288493b649c00a09f99a16391f444a51a0c7",
     "lib/features/products/presentation/widgets/product_picker_dialog.dart": "b7cfdf90fa1e6b3dd4d211bdfdcf84f9748dae1fe13fc9136a725d3c3b4dfacc",
@@ -97,7 +96,7 @@
     "lib/features/operations/presentation/cubit/operations_cubit.dart": "c2df135eb1c05b517b61f1d9d4a8695ec04641fc41b5ee49311b41a68f4d6598",
     "lib/features/operations/presentation/cubit/operations_state.dart": "0d8cfe781284f566738326dd78bb415dddf384392e9c27c31f6b00ebdca4ec80",
     "lib/features/operations/presentation/operations_screen.dart": "f012286e6f4f30a02e13e0d53afb40d89e3fb11c780a3de90dd50d55a0cb51e4",
-    "lib/features/operations/presentation/sections/audit_section.dart": "6fab428077b225ad0709a5c7e06387944f457713f721195a7d8ff7e2d70d5248",
+    "lib/features/operations/presentation/sections/audit_section.dart": "5325b052ae4c892ee12410deaa3d74f965dce71de1f3a064910da1fca75ca2a3",
     "lib/features/operations/presentation/sections/inventory_section.dart": "c8aa46f5e38ee470497b015126313852e7cff43c51a17c736b2731b88b0fe694",
     "lib/features/operations/presentation/sections/reports_section.dart": "12bf2cce455a334ad1dca4595f23e38b5416f94bccd1734066ff42cc36b980ea",
     "lib/features/operations/presentation/widgets/inventory_adjustment_dialog.dart": "e5065e6ad7e56536c361bb03072aa74e1f1d199b6be6b3c06d4ab00c40a9cc86",
@@ -159,7 +158,15 @@
     "test/features/operations/stock_receipt_failure_test.dart": "75f77798690cd6ac1b3ab1e8130c8ad90a610f22c5adb37719a073ce8a48e80d",
     "test/features/work_hours/work_hours_calculator_test.dart": "c3cb9ed77752f428dd50c51a6f8d3268f9eacbeba524aa4a6fa63e1b41834350",
     "tools/database-tests/installation-inventory.test.mjs": "2f1725679ff325d8d5956ea5b04c4650da75ad5d65c69191e8a94a4aee29aae5",
-    "test/features/dashboard/desktop_header_test.dart": "f1fab82ca69fe5b19f8dbf1751735e689a726b50b7922bbec797734ef67103d6"
+    "test/features/dashboard/desktop_header_test.dart": "f1fab82ca69fe5b19f8dbf1751735e689a726b50b7922bbec797734ef67103d6",
+    "docs/detailed-audit-events.md": "e8af1f6961080e66158bfcb2d916a44db8b788fd22d39ebd64e52bec9f7a15b9",
+    "lib/features/operations/domain/audit_entry_details.dart": "ab6ca8ec88c7d25a1101ab947b5418a28da3235c2b6348d2f279b4ad6aa8a527",
+    "lib/features/operations/presentation/widgets/audit_entry_details_view.dart": "bbbadde02a779a3c3732009b7d1678e80091af63d19887fa25b58d021423066e",
+    "supabase/migrations/20261105194016_detailed_audit_events.sql": "373b14599c67ea44673b8326f028c7650d42b1037434dc7063ed6e77e9bc61fd",
+    "test/features/operations/audit_entry_details_test.dart": "5898e0b6f3a1cae9830d229644b14f3b2decb741bfa97f9d4d83438e28698aec",
+    "tools/database-tests/audit-details.test.mjs": "8c5ab07f1d1dc718c44dd077c313cad7396530d9c3fa1891f24c697d3457da08",
+    "lib/features/operations/domain/audit_sale_details.dart": "c5df4871d4053d676a458a17612fd75d876b9662e2913b984d19444ba3fa235f",
+    "tools/database-tests/detailed-sale-audit.test.mjs": "1407fd49ad4903cc5a4b99605981147e558c423af6ad02a0577ab9a854068b24"
   },
   "database_status": "Single additive SQL update supplied for manual production application. No live SQL executed.",
   "validation": {
@@ -173,6 +180,10 @@
     "live_authenticated_workflows_tested": false
   },
   "cpanel_activated": false,
-  "header_tests_passed_per_brand": 4,
-  "narrow_header_clock_test_passed": true
+  "changes": "Detailed audit summaries and full item/field views across categories; protected future stock snapshots",
+  "audit_ui_tests_passed_per_brand": 21,
+  "audit_database_scenarios_passed": 6,
+  "static_analysis": "No issues found",
+  "audit_sql_update_file": "deployment/20261105194016_detailed_audit_events.sql",
+  "audit_sql_update_sha256": "373b14599c67ea44673b8326f028c7650d42b1037434dc7063ed6e77e9bc61fd"
 }

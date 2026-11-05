@@ -243,3 +243,22 @@ The release web build completed. No database deployment is needed for this fix.
 
 Release cache version: `6e57d7e2877501dc`. Activate in cPanel with
 **Update from Remote → Deploy HEAD Commit**, then reload the app.
+
+
+## Detailed audit entries — 5 November 2026
+
+Audit lists now preview item names and quantity changes, including stock before
+and after, with full readable item/field details. Existing sale/refund views,
+Arabic/English, branch permissions and the header fix are preserved.
+
+Before activating, run `deployment/20261105194016_detailed_audit_events.sql` in the production
+Supabase SQL Editor AFTER the earlier combined production update (which already
+includes detailed sale audits). If that earlier update already succeeded, run
+only this new migration. Do not rerun the old update after the new audit migration,
+because it replaces the audit reader. See `deployment/detailed-audit-events.md`.
+SQL is supplied for separate manual deployment; this upload does not execute it.
+
+21 focused Dart tests passed per brand, six PostgreSQL scenarios passed, and
+static analysis reported no issues. The release web build completed.
+Cache version: `99d25a7f3df16b74`. Activate in cPanel with
+**Update from Remote → Deploy HEAD Commit**, then reload the application.
