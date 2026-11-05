@@ -230,3 +230,16 @@ Built from shared source `a07b8ea5ab3fc7725515028dca872064f81cc7fc`. Sales confi
 This build also contains the unified Plugy receipt features: product/charger photos, editable receipt text and warranty years, selected optional items in the total, and saved drag-and-drop item order. If not already applied, run [the additive receipt text migration](deployment/20261105000000_installation_receipt_text.sql) in Plugy's SQL Editor to enable saving the new receipt customizations. This upload does not apply SQL or change backend identities, users or records.
 
 Release entrypoints use cache version `56a6030219616537` and clear the previous Flutter offline caches. Offline service-worker caching is disabled. Activate this release in cPanel with **Update from Remote → Deploy HEAD Commit**, then reload the app. The GitHub upload alone does not activate the live hosting deployment.
+
+
+## Header button visibility fix — 5 November 2026
+
+The page title now uses its measured width so the header actions can fill the
+remaining space, removing the blank area that clipped buttons. Cairo clock,
+production features, branding and backend configuration are preserved.
+Four focused header tests passed under each brand in Arabic and English at
+600px and 1455px; the existing narrow-header clock check also passed.
+The release web build completed. No database deployment is needed for this fix.
+
+Release cache version: `6e57d7e2877501dc`. Activate in cPanel with
+**Update from Remote → Deploy HEAD Commit**, then reload the app.

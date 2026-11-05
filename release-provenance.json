@@ -1,18 +1,17 @@
 {
   "brand": "plugy",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
-  "release_cache_version": "4e6da6e4f1657933",
-  "built_at_utc": "2026-11-05T17:27:54.632911+00:00",
+  "release_cache_version": "6e57d7e2877501dc",
+  "built_at_utc": "2026-11-05T17:50:41.390010+00:00",
   "source_revision": "86d10530449d6321bd714be65748939ce7cbfee3",
   "source_has_uncommitted_changes": true,
-  "changes": "Verified email password recovery screen",
-  "auth_tests_passed_per_brand": 32,
+  "changes": "Fix header title width allocation clipping trailing buttons; preserve Cairo clock and current production features",
   "database_changes_applied": false,
   "environment": "production",
   "platform": "web",
   "base_href": "./",
-  "previous_production_commit": "37610f10fd6c95f9275f993299745f32f12fc4ca",
-  "main_dart_js_sha256": "4e6da6e4f16579335b86f2247c728aa27ef1914c9de7343367d757bfae5fba73",
+  "previous_production_commit": "259ecceab6b667d164037a91cbca299f99a2f7a4",
+  "main_dart_js_sha256": "6e57d7e2877501dcce37a0fd07850d3d1660aef9f5c48cb3714d7636804cfddf",
   "sql_update_file": "deployment/plugy_production_update_20261105.sql",
   "sql_update_sha256": "961b951a16b6d03168b83775d83077d8e0dcc77a40a334a4c9f6ccd71dec94e1",
   "source_file_sha256": {
@@ -79,7 +78,7 @@
     "lib/features/dashboard/presentation/dashboard_screen.dart": "6a0288599ade7d6f45e976acc75eb2728620ef4501dac3ea22e514655108c317",
     "lib/features/dashboard/presentation/widgets/dashboard_home.dart": "4f6928f2da70818aec63016f50e76604518609599a3c068b328f9f4adedb4ed5",
     "lib/features/dashboard/presentation/widgets/dashboard_sales_charts.dart": "2ac60df3063bdd0e38f709ed3d8cf2a6552fb47b0ee5cb72679386e87e073e57",
-    "lib/features/dashboard/presentation/widgets/desktop_header.dart": "e591c8f6740e50733b3efe4299d085d62a18ef45fb40dfb46666e461940fe24e",
+    "lib/features/dashboard/presentation/widgets/desktop_header.dart": "734590dff6a832a7b41360948ca38d0a57050476d01bdb7c4b05477841e56e62",
     "lib/features/dashboard/presentation/widgets/header_actions.dart": "c18edafd89490edc03dc69cc603abcd87e4840a58bf881ac9cdc3e6e700729b4",
     "lib/features/expenses/data/expense_model.dart": "e7c5aed142f0753887325139f0c62ce26d9dea371f2f16470ce401df32f10720",
     "lib/features/expenses/presentation/expenses_screen.dart": "73f2afc61d7779c1d387113c9f4bab0ea0e4d371b1e509cac75dfce09a01fe4d",
@@ -159,7 +158,8 @@
     "test/features/operations/operations_valuation_test.dart": "8fb5f653b319b212e45c57154600f4a49ebcc44e63b2cb13d8a9d68d90c91e87",
     "test/features/operations/stock_receipt_failure_test.dart": "75f77798690cd6ac1b3ab1e8130c8ad90a610f22c5adb37719a073ce8a48e80d",
     "test/features/work_hours/work_hours_calculator_test.dart": "c3cb9ed77752f428dd50c51a6f8d3268f9eacbeba524aa4a6fa63e1b41834350",
-    "tools/database-tests/installation-inventory.test.mjs": "2f1725679ff325d8d5956ea5b04c4650da75ad5d65c69191e8a94a4aee29aae5"
+    "tools/database-tests/installation-inventory.test.mjs": "2f1725679ff325d8d5956ea5b04c4650da75ad5d65c69191e8a94a4aee29aae5",
+    "test/features/dashboard/desktop_header_test.dart": "f1fab82ca69fe5b19f8dbf1751735e689a726b50b7922bbec797734ef67103d6"
   },
   "database_status": "Single additive SQL update supplied for manual production application. No live SQL executed.",
   "validation": {
@@ -172,5 +172,7 @@
     "brand_backend_identity": "verified",
     "live_authenticated_workflows_tested": false
   },
-  "cpanel_activated": false
+  "cpanel_activated": false,
+  "header_tests_passed_per_brand": 4,
+  "narrow_header_clock_test_passed": true
 }
