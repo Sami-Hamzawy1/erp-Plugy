@@ -1,0 +1,23 @@
+{
+  "brand": "plugy",
+  "environment": "production",
+  "platform": "web",
+  "source_revision": "9ae575cf97eadc2d1fb94c5872fba859b1d6a582",
+  "previous_production_commit": "44f46ae48de644b9be0cb008862b6a7675250e2e",
+  "supabase_project_ref": "orbovqzenjlyshhiuofx",
+  "built_at_utc": "2026-10-25T01:48:10.350053+00:00",
+  "main_dart_js_sha256": "0d16c2295a01761320c844151f58a4e2e37c304f178b93256f156eb584ac7829",
+  "release_cache_version": "0d16c2295a017613",
+  "base_href": "./",
+  "validation": {
+    "plugy_tests_passed": 109,
+    "evox_tests_passed": 25,
+    "dart_analysis": "No issues found",
+    "isolated_database_checks": "passed",
+    "test_backend_excluded": true,
+    "server_secret_scan_passed": true,
+    "live_authenticated_workflows_tested": false
+  },
+  "database_status": "No live SQL executed. Inventory and detailed audit RPCs absent from production API cache; review and deploy included additive migrations.",
+  "cpanel_activated": false
+}

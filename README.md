@@ -1,3 +1,19 @@
+# PLUGY EV — production web release
+
+Latest release: inventory PDFs, employee branch access, asset photos, Cairo time,
+vendor product search, readable audits and email password recovery.
+
+**Before cPanel activation:** run the one
+[production SQL update](deployment/plugy_production_update_20261105.sql) in the
+Plugy production Supabase SQL Editor. Read the
+[release instructions](deployment/production-update-20261105.md) for prerequisites,
+password-reset URL configuration and verification.
+
+Activate in cPanel with **Update from Remote → Deploy HEAD Commit**.
+The upload does not execute SQL or activate hosting.
+
+## Previous releases
+
 # PLUGY EV — production web build
 
 ## Latest release: installation stock, bank controls and audit updates
