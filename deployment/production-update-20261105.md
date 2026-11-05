@@ -3,14 +3,16 @@
 Includes per-branch inventory revision PDFs for ordinary and shared installation stock,
 multiple employee branches, asset photos on new/existing assets, Cairo system clock and
 receipt/report date alignment, searchable vendor stock product selection, readable audit
-summaries and secure email password recovery at `/reset-password`.
+summaries and secure email password recovery at `/reset-password`, saved services and quotation
+cost snapshots, quotation archival, full-catalog multi-select, expanded invoice search
+and company loans with installment repayments.
 
 ## Activate
 
 1. In production Supabase project `orbovqzenjlyshhiuofx`, run the entire
    [`plugy_production_update_20261105.sql`](plugy_production_update_20261105.sql)
    file in SQL Editor. This is the ONE update file for this release. It checks
-   existing prerequisites first and commits all four incremental migrations together.
+   existing prerequisites first and commits all six incremental migrations together.
    Success returns `PLUGY_UPDATE_COMPLETE`. If it fails, stop and share the error;
    do not remove checks or run the historical accounting/reset installers.
 2. In cPanel Git Version Control, use **Update from Remote → Deploy HEAD Commit**.
@@ -35,7 +37,8 @@ on reapplication. No fresh setup/reset scripts or invoice-specific data repairs
 are included. A compatible existing operations/security/accounting schema is required.
 
 The release build passed. 32 auth and 15 audit checks passed for each brand;
-11 focused isolated database scenarios passed, including the exact combined SQL,
+77 merged-feature checks passed for each brand. Four focused combined-release database
+scenarios passed, including the exact combined SQL,
 reapplication and prerequisite failure. Brand/backend identities and versioned
 cache refresh entrypoints were verified. No live SQL, password resets or business
 transactions were performed. GitHub upload alone does not activate cPanel hosting.

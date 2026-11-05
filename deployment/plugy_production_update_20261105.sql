@@ -3,7 +3,8 @@
 -- Run this ENTIRE file once in Supabase SQL Editor as the migration owner.
 -- For the existing production schema only: this is not a fresh installer.
 -- Installs/reapplies shared installation inventory, detailed future-sale audits,
--- employee multi-branch access and private asset photos. Existing rows are retained.
+-- employee multi-branch access, asset photos, installation workflow and company loans.
+-- Existing rows are retained; missing sale-to-quotation links are backfilled.
 -- Earlier accounting/refund/fee/balance-sheet/installation-financials updates
 -- must already be installed. Do not replay those historical installers here.
 -- This file does NOT change Supabase Auth Site URL or Redirect URLs. Set those
@@ -25,7 +26,7 @@ begin
   'public.installation_lines','public.expenses','public.inventory_balances',
   'public.audit_events','public.transactions','public.transaction_settlements',
   'public.treasury_transactions','private.access_v2_state',
-  'private.access_v2_rpc_registry','storage.buckets','storage.objects'
+  'private.access_v2_rpc_registry','private.accounting_cash_classes','storage.buckets','storage.objects'
  ] loop
   if to_regclass(item) is null then missing := array_append(missing,item); end if;
  end loop;
@@ -35,6 +36,8 @@ begin
   'public.access_management_overview_v2()',
   'public.replace_expense_v1(jsonb,jsonb,jsonb)',
   'public.save_installation_finance_v1(jsonb,jsonb)',
+  'public.installation_services_v3(jsonb)',
+  'public.installation_quotes_v3(jsonb)',
   'private.complete_installation_document_v1(jsonb,uuid)',
   'private.complete_refund_documents_v1(jsonb,jsonb)',
   'private.refund_line_gross_v3(uuid)',
@@ -750,6 +753,352 @@ begin
 end $$;
 notify pgrst,'reload schema';
 
+
+-- SOURCE: 20261112000000_installation_workflow.sql
+-- SHA256: 7414555fd6c526be340a44271d3bba960cc784e5d601e5fb34727908f8f0b4cd
+alter table public.installation_services add column if not exists default_cost numeric(14,4) not null default 0
+ check(default_cost>=0 and default_cost<'Infinity'::numeric);
+alter table public.installation_services add column if not exists is_default boolean not null default false;
+alter table public.installation_lines add column if not exists unit_cost numeric(14,4) not null default 0
+ check(unit_cost>=0 and unit_cost<'Infinity'::numeric);
+alter table public.installation_lines add column if not exists image_url text;
+alter table public.installations add column if not exists deleted_at timestamptz;
+alter table public.sales add column if not exists installation_id uuid references public.installations(id);
+create index if not exists sales_installation_idx on public.sales(installation_id) where installation_id is not null;
+update public.sales s set installation_id=i.id from public.installations i where i.sale_id=s.id and s.installation_id is null;
+
+create or replace function private.installation_cost_visible_v1(loc uuid)
+returns boolean language plpgsql stable security definer set search_path='' as $$
+begin
+ if not coalesce(private.actor_is_active_v1(),false) then return false; end if;
+ if private.access_v2_enabled(auth.uid()) then return private.access_v2_allows(auth.uid(),'report_cost.read',loc); end if;
+ return coalesce(private.has_permission(auth.uid(),'viewReports'),false)
+  and (loc is null or private.has_location_access(auth.uid(),loc));
+end $$;
+revoke all on function private.installation_cost_visible_v1(uuid) from public,anon,authenticated;
+
+-- Keep saved terms, totals, deposits and permissions in the existing writers.
+do $$ declare definition text; signature text; backup text;
+begin
+ foreach signature in array array['save_installation_finance_v1(jsonb,jsonb)','installation_services_v3(jsonb)','installation_quotes_v3(jsonb)'] loop
+  backup:=case split_part(signature,'(',1) when 'save_installation_finance_v1' then 'installation_workflow_previous_v1'
+   when 'installation_services_v3' then 'installation_services_previous_v4' else 'installation_quotes_previous_v4' end;
+  if to_regprocedure('private.'||backup||substr(signature,strpos(signature,'('))) is null then
+   select pg_get_functiondef(('public.'||signature)::regprocedure) into definition;
+   execute replace(definition,'public.'||split_part(signature,'(',1)||'(', 'private.'||backup||'(');
+  end if;
+ end loop;
+end $$;
+revoke all on function private.installation_workflow_previous_v1(jsonb,jsonb),private.installation_services_previous_v4(jsonb),private.installation_quotes_previous_v4(jsonb) from public,anon,authenticated;
+
+create or replace function public.installation_services_v3(input jsonb default '{}')
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare rows jsonb; target uuid; loc uuid:=nullif(input->>'location_id','')::uuid; visible boolean;
+begin
+ visible:=private.installation_cost_visible_v1(loc);
+ if input->>'action'='save' and input ? 'default_cost' and not visible then
+  raise exception using errcode='42501',message='INSTALLATION_COST_FORBIDDEN'; end if;
+ target:=coalesce(nullif(input->>'id','')::uuid,gen_random_uuid());
+ rows:=private.installation_services_previous_v4(case when input->>'action'='save' then input||jsonb_build_object('id',target) else input end);
+ if input->>'action'='save' and input ? 'default_cost' then
+  if input->>'default_cost' is null then raise exception 'INVALID_INSTALLATION_COST'; end if;
+  update public.installation_services set default_cost=(input->>'default_cost')::numeric where id=target;
+ end if;
+ if input->>'action'='save' and input ? 'is_default' then
+  update public.installation_services set is_default=coalesce((input->>'is_default')::boolean,false) where id=target;
+ end if;
+ return (select coalesce(jsonb_agg(case when visible then to_jsonb(s) else to_jsonb(s)-'default_cost' end order by s.name_en),'[]') from public.installation_services s);
+end $$;
+
+create or replace function public.save_installation_finance_v1(input jsonb,lines_input jsonb)
+returns uuid language plpgsql security definer set search_path='' as $$
+declare target uuid; old_costs jsonb; old_images jsonb; loc uuid:=nullif(input->>'location_id','')::uuid;
+ line jsonb; visible boolean;
+begin
+ -- Serialize with saves, checkout and settlements before inspecting history.
+ perform pg_advisory_xact_lock(7353101101);
+ if exists(select 1 from public.installations where quotation_number=input->>'quotation_number' and deleted_at is not null) then
+  raise exception 'INSTALLATION_LOCKED'; end if;
+ visible:=private.installation_cost_visible_v1(loc);
+ if exists(select 1 from jsonb_array_elements(lines_input) x where x->>'kind'='service' and x ? 'unit_cost') and not visible then
+  raise exception using errcode='42501',message='INSTALLATION_COST_FORBIDDEN'; end if;
+ select coalesce(jsonb_object_agg(coalesce(l.client_line_id,l.id::text),l.unit_cost),'{}'),
+  coalesce(jsonb_object_agg(coalesce(l.client_line_id,l.id::text),l.image_url),'{}') into old_costs,old_images from public.installation_lines l
+  join public.installations i on i.id=l.installation_id where i.quotation_number=input->>'quotation_number';
+ target:=private.installation_workflow_previous_v1(input,lines_input);
+ for line in select value from jsonb_array_elements(lines_input) loop
+  if line->>'kind'='service' and line ? 'unit_cost' and line->>'unit_cost' is null then raise exception 'INVALID_INSTALLATION_COST'; end if;
+  if nullif(line->>'image_url','') is not null and (length(line->>'image_url')>4096 or line->>'image_url' !~ '^https?://') then raise exception 'INVALID_INSTALLATION_IMAGE'; end if;
+  update public.installation_lines set
+   unit_cost=case when line->>'kind'='service' and line ? 'unit_cost' then (line->>'unit_cost')::numeric
+    else coalesce((old_costs->>(line->>'client_line_id'))::numeric,0) end,
+   image_url=case when line ? 'image_url' then nullif(line->>'image_url','')
+    else old_images->>(line->>'client_line_id') end
+  where installation_id=target and client_line_id=line->>'client_line_id';
+ end loop;
+ return target;
+end $$;
+
+create or replace function public.installation_quotes_v3(input jsonb default '{}')
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare quote jsonb; result jsonb:='[]'; visible boolean;
+begin
+ for quote in select value from jsonb_array_elements(private.installation_quotes_previous_v4(input)) loop
+  if quote->>'deleted_at' is not null then continue; end if;
+  visible:=private.installation_cost_visible_v1((quote->>'location_id')::uuid);
+  if not visible then
+   quote:=jsonb_set(quote,'{lines}',(select coalesce(jsonb_agg(value-'unit_cost'),'[]') from jsonb_array_elements(quote->'lines')));
+  end if;
+  result:=result||jsonb_build_array(quote);
+ end loop;
+ return result;
+end $$;
+
+create or replace function public.delete_installation_quote_v1(input jsonb)
+returns uuid language plpgsql security definer set search_path='' as $$
+declare quote public.installations%rowtype; doc public.transactions%rowtype;
+begin
+ perform pg_advisory_xact_lock(7353101101);
+ select * into quote from public.installations where id=(input->>'id')::uuid for update;
+ if not found then raise exception 'INSTALLATION_NOT_FOUND'; end if;
+ perform private.checkout_access_v3('installation.update','posCheckout',quote.location_id);
+ if not coalesce(private.actor_is_active_v1(),false) then raise exception using errcode='42501',message='AUTH_REQUIRED'; end if;
+ if not private.access_v2_enabled(auth.uid()) and not exists(select 1 from public.profiles where id=auth.uid() and is_active and role in ('admin','manager')) then
+  raise exception using errcode='42501',message='ACCESS_DENIED'; end if;
+ if quote.sale_id is not null then raise exception 'QUOTE_HAS_FINANCIAL_HISTORY'; end if;
+ for doc in select * from public.transactions where installation_id=quote.id for update loop
+  if exists(select 1 from public.transaction_allocations where transaction_id=doc.id)
+    or exists(select 1 from public.transaction_settlements where transaction_id=doc.id) then raise exception 'QUOTE_HAS_FINANCIAL_HISTORY'; end if;
+ end loop;
+ update public.installations set deleted_at=coalesce(deleted_at,now()),status='cancelled',updated_at=now() where id=quote.id;
+ update public.transactions set status='void' where installation_id=quote.id and status='posted';
+ insert into public.audit_events(actor_id,action,entity_type,entity_id) values(auth.uid(),'installation_deleted','installation',quote.id);
+ return quote.id;
+end $$;
+
+-- Both modern and legacy checkout use the service's saved cost without moving stock.
+do $$ declare definition text; writer text;
+begin
+ foreach writer in array array['private.complete_installation_document_v1(jsonb,uuid)','private.installation_legacy_document_v3(jsonb,uuid)'] loop
+  select pg_get_functiondef(writer::regprocedure) into definition;
+  if position('cost_value:=line.unit_cost' in definition)=0 then
+   if position('product_value:=null;cost_value:=0;p:=null;' in definition)=0 then raise exception 'INSTALLATION_WRITER_INCOMPATIBLE'; end if;
+   definition:=replace(definition,'product_value:=null;cost_value:=0;p:=null;',
+    'product_value:=null;cost_value:=line.unit_cost;p:=null;');
+   end if;
+  definition:=replace(definition,'if i.id is null or i.sale_id is not null or',
+    'if i.id is null or i.sale_id is not null or i.deleted_at is not null or');
+  -- Reapplication leaves an already inserted predicate unchanged.
+  definition:=replace(definition,'or i.deleted_at is not null or i.deleted_at is not null or','or i.deleted_at is not null or');
+  execute definition;
+ end loop;
+end $$;
+
+-- The existing installation update is the authoritative conversion link.
+create or replace function private.capture_installation_sale_v1() returns trigger
+language plpgsql security definer set search_path='' as $$ begin
+ if new.sale_id is not null then update public.sales set installation_id=new.id where id=new.sale_id; end if;
+ return new;
+end $$;
+revoke all on function private.capture_installation_sale_v1() from public,anon,authenticated;
+drop trigger if exists installation_sale_link_v1 on public.installations;
+create trigger installation_sale_link_v1 after update of sale_id on public.installations for each row execute function private.capture_installation_sale_v1();
+
+-- Add only the safe link column to the existing redacted invoice view.
+do $$ declare definition text; begin
+ if to_regclass('public.access_v2_sales') is not null and not exists(select 1 from information_schema.columns where table_schema='public' and table_name='access_v2_sales' and column_name='installation_id') then
+  select rtrim(pg_get_viewdef('public.access_v2_sales'::regclass,true),'; '||chr(10)) into definition;
+  execute 'create or replace view public.access_v2_sales with (security_barrier=true) as select existing.*,s.installation_id from ('||definition||') existing join public.sales s on s.id=existing.id';
+ end if;
+end $$;
+
+revoke all on function public.delete_installation_quote_v1(jsonb) from public,anon;
+grant execute on function public.delete_installation_quote_v1(jsonb) to authenticated;
+do $$ declare rpc_signature text; begin
+ foreach rpc_signature in array array['delete_installation_quote_v1(jsonb)','installation_services_v3(jsonb)','installation_quotes_v3(jsonb)','save_installation_finance_v1(jsonb,jsonb)'] loop
+  insert into private.access_v2_rpc_registry(signature,function_oid,original_definition)
+   values(rpc_signature,('public.'||rpc_signature)::regprocedure,pg_get_functiondef(('public.'||rpc_signature)::regprocedure))
+   on conflict(signature) do update set function_oid=excluded.function_oid,original_definition=excluded.original_definition;
+ end loop;
+end $$;
+notify pgrst,'reload schema';
+
+
+-- SOURCE: 20261112000001_company_loans.sql
+-- SHA256: d39d2ff16e0e130734cf1f458710e2d2383ca751822e60ae6bc5fd8ef6d0bd34
+-- Requires the integrated accounting migration so loan cash flows are financing,
+-- and principal repayments never become operating expenses.
+do $$ begin
+ if to_regclass('private.accounting_cash_classes') is null then raise exception 'INTEGRATED_ACCOUNTING_MIGRATION_REQUIRED'; end if;
+end $$;
+create table if not exists private.company_loans (
+ id uuid primary key, location_id uuid not null references public.locations(id),
+ lender text not null check(length(btrim(lender)) between 1 and 200),
+ principal numeric(14,2) not null check(principal>0 and principal<'Infinity'::numeric),
+ received_date date not null check(isfinite(received_date)), notes text,
+ transaction_id uuid not null unique references public.transactions(id),
+ request_payload jsonb not null, created_by uuid not null references public.profiles(id),
+ created_at timestamptz not null default now()
+);
+create index if not exists company_loans_location_idx on private.company_loans(location_id,created_at desc);
+create table if not exists private.loan_installments (
+ id uuid primary key default gen_random_uuid(), loan_id uuid not null references private.company_loans(id),
+ due_date date not null check(isfinite(due_date)),
+ amount numeric(14,2) not null check(amount>0 and amount<'Infinity'::numeric)
+);
+create index if not exists loan_installments_loan_idx on private.loan_installments(loan_id,due_date,id);
+create table if not exists private.loan_payments (
+ id uuid primary key, installment_id uuid not null references private.loan_installments(id),
+ amount numeric(14,2) not null check(amount>0 and amount<'Infinity'::numeric),
+ transaction_id uuid not null unique references public.transactions(id), request_payload jsonb not null
+);
+create index if not exists loan_payments_installment_idx on private.loan_payments(installment_id);
+alter table private.company_loans enable row level security;
+alter table private.loan_installments enable row level security;
+alter table private.loan_payments enable row level security;
+revoke all on private.company_loans,private.loan_installments,private.loan_payments from public,anon,authenticated;
+
+create or replace function private.loan_access_v1(loc uuid,writing boolean default false)
+returns void language plpgsql security definer set search_path='' as $$ begin
+ if loc is null or not coalesce(private.actor_is_active_v1(),false) or not private.branch_scope_location(auth.uid(),loc,writing) then
+  raise exception using errcode='42501',message='LOAN_BRANCH_FORBIDDEN'; end if;
+ perform private.checkout_access_v3('transaction.read','manageTreasury',loc);
+ if writing then
+  perform private.checkout_access_v3('manual_transaction.create','manageTreasury',loc);
+  perform private.checkout_access_v3('transaction_settlement.create','manageTreasury',loc);
+ end if;
+end $$;
+revoke all on function private.loan_access_v1(uuid,boolean) from public,anon,authenticated;
+
+create or replace function private.loan_cash_v1(input jsonb,loc uuid,incoming boolean,amount_value numeric,reason text)
+returns uuid language plpgsql security definer set search_path='' as $$
+declare doc uuid; settlement uuid; cash uuid; account public.treasury_accounts%rowtype;
+begin
+ select * into account from public.treasury_accounts where id=(input->>'account_id')::uuid and is_active for update;
+ if not found or (account.location_id is not null and account.location_id<>loc)
+  or not private.branch_scope_location(auth.uid(),coalesce(account.location_id,loc),true) then raise exception 'LOAN_ACCOUNT_FORBIDDEN'; end if;
+ insert into public.transactions(type,direction,reference,description,location_id,total,occurred_at,created_by)
+ values(case when incoming then 'deposit' else 'withdrawal' end,case when incoming then 'incoming' else 'outgoing' end,
+  input->>'id',reason,loc,amount_value,(input->>'date')::date::timestamptz,auth.uid()) returning id into doc;
+ settlement:=private.post_settlement_v1(jsonb_build_object('transaction_id',doc,'account_id',account.id,
+  'amount',amount_value,'payment_method',coalesce(input->>'payment_method','cash'),'location_id',loc,
+  'description',reason,'reference',input->>'reference','occurred_at',(input->>'date')::date::timestamptz,
+  'idempotency_key','loan:'||(input->>'id')));
+ select id into cash from public.treasury_transactions where settlement_id=settlement;
+ insert into private.accounting_cash_classes(treasury_id,account,activity) values(cash,'loans','financing');
+ return doc;
+end $$;
+revoke all on function private.loan_cash_v1(jsonb,uuid,boolean,numeric,text) from public,anon,authenticated;
+
+create or replace function public.company_loans_v1(input jsonb default '{}')
+returns jsonb language plpgsql security definer set search_path='' set timezone='Africa/Cairo' as $$
+declare action text:=coalesce(input->>'action','list'); loc uuid:=nullif(input->>'location_id','')::uuid;
+ target uuid; loan private.company_loans%rowtype; installment private.loan_installments%rowtype;
+ payment private.loan_payments%rowtype; line jsonb; amount_value numeric; paid numeric; scheduled numeric; document uuid;
+begin
+ if action not in ('list','create','pay','schedule') then raise exception 'INVALID_LOAN_ACTION'; end if;
+ perform private.loan_access_v1(loc,action<>'list');
+ if action='create' then
+  target:=(input->>'id')::uuid;
+  if target is null then raise exception 'LOAN_REQUEST_ID_REQUIRED'; end if;
+  perform pg_advisory_xact_lock(hashtextextended('loan:'||target::text,0));
+  select * into loan from private.company_loans where id=target;
+  if found then
+   if loan.location_id<>loc or loan.request_payload<>input then raise exception 'LOAN_REQUEST_CHANGED'; end if;
+   return jsonb_build_object('id',loan.id);
+  end if;
+  amount_value:=(input->>'amount')::numeric;
+  if amount_value is null or amount_value<=0 or amount_value>999999999999.99 or amount_value<>round(amount_value,2)
+   or amount_value::text in ('NaN','Infinity','-Infinity') or nullif(btrim(input->>'lender'),'') is null
+   or (input->>'date') is null or not isfinite((input->>'date')::date) then raise exception 'INVALID_LOAN_DETAILS'; end if;
+  if jsonb_typeof(input->'schedule') is distinct from 'array' or jsonb_array_length(input->'schedule') not between 1 and 240 then raise exception 'INVALID_LOAN_SCHEDULE'; end if;
+  select sum((value->>'amount')::numeric) into scheduled from jsonb_array_elements(input->'schedule');
+  if scheduled is distinct from amount_value then raise exception 'LOAN_SCHEDULE_TOTAL_MISMATCH'; end if;
+  for line in select value from jsonb_array_elements(input->'schedule') loop
+   if line->>'amount' is null or (line->>'amount')::numeric<=0 or (line->>'amount')::numeric<>round((line->>'amount')::numeric,2)
+    or line->>'date' is null or not isfinite((line->>'date')::date) or (line->>'date')::date<(input->>'date')::date then raise exception 'INVALID_LOAN_SCHEDULE'; end if;
+  end loop;
+  document:=private.loan_cash_v1(input,loc,true,amount_value,'Loan received: '||(input->>'lender'));
+  insert into private.company_loans(id,location_id,lender,principal,received_date,notes,transaction_id,request_payload,created_by)
+   values(target,loc,btrim(input->>'lender'),amount_value,(input->>'date')::date,input->>'notes',document,input,auth.uid());
+  insert into private.loan_installments(loan_id,due_date,amount)
+   select target,(value->>'date')::date,(value->>'amount')::numeric from jsonb_array_elements(input->'schedule');
+ elsif action in ('pay','schedule') then
+  -- Lock the loan before the installment to serialize edits and partial payments.
+  target:=(input->>'loan_id')::uuid;
+  select * into loan from private.company_loans where id=target and location_id=loc for update;
+  if not found then raise exception 'LOAN_NOT_FOUND'; end if;
+  if action='pay' then
+   select * into payment from private.loan_payments where id=(input->>'id')::uuid;
+   if found then
+    if payment.request_payload<>input then raise exception 'LOAN_REQUEST_CHANGED'; end if;
+    return jsonb_build_object('id',payment.id);
+   end if;
+   select * into installment from private.loan_installments where id=(input->>'installment_id')::uuid and loan_id=loan.id for update;
+   if not found then raise exception 'LOAN_INSTALLMENT_NOT_FOUND'; end if;
+   select coalesce(sum(amount),0) into paid from private.loan_payments where installment_id=installment.id;
+   amount_value:=(input->>'amount')::numeric;
+   if nullif(input->>'id','') is null or amount_value is null or amount_value<=0 or amount_value<>round(amount_value,2)
+    or amount_value::text in ('NaN','Infinity','-Infinity') or amount_value>installment.amount-paid
+    or input->>'date' is null or not isfinite((input->>'date')::date) or (input->>'date')::date<loan.received_date then raise exception 'INVALID_LOAN_PAYMENT'; end if;
+   document:=private.loan_cash_v1(input,loc,false,amount_value,'Loan repayment: '||loan.lender);
+   insert into private.loan_payments(id,installment_id,amount,transaction_id,request_payload)
+    values((input->>'id')::uuid,installment.id,amount_value,document,input);
+  else
+   -- Edit only untouched installments. Paid/partially paid rows remain intact.
+   if jsonb_typeof(input->'schedule') is distinct from 'array' or jsonb_array_length(input->'schedule') not between 1 and 240 then raise exception 'INVALID_LOAN_SCHEDULE'; end if;
+   select coalesce(sum(i.amount),0) into paid from private.loan_installments i where i.loan_id=loan.id
+    and exists(select 1 from private.loan_payments p where p.installment_id=i.id);
+   select sum((value->>'amount')::numeric) into scheduled from jsonb_array_elements(input->'schedule');
+   if scheduled is distinct from loan.principal-paid then raise exception 'LOAN_SCHEDULE_TOTAL_MISMATCH'; end if;
+   for line in select value from jsonb_array_elements(input->'schedule') loop
+    if line->>'amount' is null or (line->>'amount')::numeric<=0 or (line->>'amount')::numeric<>round((line->>'amount')::numeric,2)
+     or line->>'date' is null or not isfinite((line->>'date')::date) or (line->>'date')::date<loan.received_date then raise exception 'INVALID_LOAN_SCHEDULE'; end if;
+   end loop;
+   delete from private.loan_installments i where i.loan_id=loan.id and not exists(select 1 from private.loan_payments p where p.installment_id=i.id);
+   insert into private.loan_installments(loan_id,due_date,amount)
+    select loan.id,(value->>'date')::date,(value->>'amount')::numeric from jsonb_array_elements(input->'schedule');
+  end if;
+ end if;
+ if action<>'list' then
+  insert into public.audit_events(actor_id,action,entity_type,entity_id,after_data)
+   values(auth.uid(),'loan_'||action,'company_loan',target,input-'account_id');
+  return jsonb_build_object('id',target);
+ end if;
+ return (select coalesce(jsonb_agg(to_jsonb(l)-'request_payload'||jsonb_build_object(
+  'installments',(select coalesce(jsonb_agg(to_jsonb(i)||jsonb_build_object('paid',
+   (select coalesce(sum(p.amount),0) from private.loan_payments p where p.installment_id=i.id)) order by i.due_date,i.id),'[]')
+   from private.loan_installments i where i.loan_id=l.id)) order by l.created_at desc),'[]') from private.company_loans l where l.location_id=loc);
+end $$;
+revoke all on function public.company_loans_v1(jsonb) from public,anon;
+grant execute on function public.company_loans_v1(jsonb) to authenticated;
+
+-- Keep the repayment schedule consistent with its posted treasury records.
+create or replace function private.guard_loan_financial_history_v1() returns trigger
+language plpgsql security definer set search_path='' as $$
+declare doc uuid;
+begin
+ if tg_table_name='transactions' then
+  if new.status is not distinct from old.status then return new; end if;
+  doc:=old.id;
+ else
+  if new.reversed_settlement_id is null then return new; end if;
+  select transaction_id into doc from public.transaction_settlements where id=new.reversed_settlement_id;
+ end if;
+ if exists(select 1 from private.company_loans where transaction_id=doc)
+  or exists(select 1 from private.loan_payments where transaction_id=doc) then raise exception 'LOAN_FINANCIAL_HISTORY_LOCKED'; end if;
+ return new;
+end $$;
+revoke all on function private.guard_loan_financial_history_v1() from public,anon,authenticated;
+drop trigger if exists loan_history_document_guard on public.transactions;
+create trigger loan_history_document_guard before update of status on public.transactions for each row execute function private.guard_loan_financial_history_v1();
+drop trigger if exists loan_history_settlement_guard on public.transaction_settlements;
+create trigger loan_history_settlement_guard before insert on public.transaction_settlements for each row execute function private.guard_loan_financial_history_v1();
+insert into private.access_v2_rpc_registry(signature,function_oid,original_definition)
+ values('company_loans_v1(jsonb)','public.company_loans_v1(jsonb)'::regprocedure,pg_get_functiondef('public.company_loans_v1(jsonb)'::regprocedure))
+ on conflict(signature) do update set function_oid=excluded.function_oid,original_definition=excluded.original_definition;
+notify pgrst,'reload schema';
+
 do $verification$
 declare item text; n bigint;
 begin
@@ -775,6 +1124,8 @@ begin
  or to_regprocedure('public.read_audit_events_v1(jsonb)') is null
  or to_regprocedure('public.admin_save_employee_v1(jsonb,text,text,jsonb,jsonb)') is null
  or to_regclass('private.asset_photos') is null
+ or to_regprocedure('public.company_loans_v1(jsonb)') is null
+ or to_regclass('private.loan_installments') is null
  or not exists(select 1 from storage.buckets where id='asset-photos' and not public) then
   raise exception 'PRODUCTION_UPDATE_VERIFICATION_FAILED';
  end if;
