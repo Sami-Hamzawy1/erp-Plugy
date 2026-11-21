@@ -266,11 +266,27 @@ revoke all on function public.accounting_loans_v1(uuid),public.accounting_loan_c
 grant execute on function public.accounting_loans_v1(uuid),public.accounting_loan_command_v1(jsonb)
   to authenticated;
 
-insert into private.access_v2_rpc_registry(signature,function_oid,original_definition)
-select p.oid::regprocedure::text,p.oid,pg_get_functiondef(p.oid) from pg_proc p
-where p.pronamespace='public'::regnamespace
-  and p.proname in ('company_loans_v1','accounting_loans_v1','accounting_loan_command_v1')
-on conflict(signature) do update set function_oid=excluded.function_oid,original_definition=excluded.original_definition;
-select private.access_v2_assert_coverage();
+-- Check only the loan endpoints changed by this transaction. The global
+-- authorization audit remains part of access enforcement activation.
+do $loan_access$
+declare
+  endpoint regprocedure;
+begin
+  foreach endpoint in array array[
+    'public.company_loans_v1(jsonb)'::regprocedure,
+    'public.accounting_loans_v1(uuid)'::regprocedure,
+    'public.accounting_loan_command_v1(jsonb)'::regprocedure
+  ] loop
+    if has_function_privilege('anon',endpoint,'EXECUTE')
+      or not has_function_privilege('authenticated',endpoint,'EXECUTE') then
+      raise exception using errcode='42501',message='LOAN_RPC_EXECUTE_GRANT_INVALID:'||endpoint;
+    end if;
+
+    insert into private.access_v2_rpc_registry(signature,function_oid,original_definition)
+    values(endpoint::text,endpoint,pg_get_functiondef(endpoint))
+    on conflict(signature) do update
+      set function_oid=excluded.function_oid,original_definition=excluded.original_definition;
+  end loop;
+end $loan_access$;
 notify pgrst,'reload schema';
 commit;

@@ -39,7 +39,8 @@
     },
     {
       "file": "deployment/2026-11-21/20261117030300_loan_installments.sql",
-      "sha256": "ee208cb4826cb165db144fad4952a5ecd14c7637d7638d964fe0f5fb5bd68561"
+      "sha256": "ccef03b0de836e3a6106c3db6f0f4ffcc2ba60f88813570a51a5158e4dff9cc6",
+      "validation": "Passed an isolated database upgrade with the same unrelated authorization audit failure."
     }
   ],
   "validation": {

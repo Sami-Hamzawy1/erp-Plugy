@@ -23,6 +23,12 @@ one complete file at a time. Keep each transaction boundary.
 6. [20261117025100_purchase_landed_costs.sql](20261117025100_purchase_landed_costs.sql)
 7. [20261117030300_loan_installments.sql](20261117030300_loan_installments.sql)
 
+If the previous loan migration failed with
+`ACCESS_UNGUARDED_RPC:public.quotes_admin_list_v1()`, retry the complete
+corrected file in step 7. If the SQL Editor reports an aborted transaction,
+run `ROLLBACK;` first. A previously successful installation needs no retry.
+The quote endpoint remains subject to the separate authorization audit.
+
 The loan migration uses the existing company-loan tables. It retains prior
 funding documents, schedules and payments and uses the standard settlement
 reversal workflow. Check a branch-scoped report and confirm the same loan
