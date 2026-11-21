@@ -2,14 +2,14 @@
   "brand": "plugy",
   "platform": "web",
   "environment": "production",
-  "built_at_utc": "2026-11-21T02:34:17.239543+00:00",
-  "source_revision": "907770f0d7da78b5cf3b309a63f1dbf725f3802f",
+  "built_at_utc": "2026-11-21T02:52:48.306066+00:00",
+  "source_revision": "4931ea1fafeb145d57b838d66e9722842a5368c8",
   "source_has_uncommitted_changes": false,
-  "previous_production_commit": "08ed8f6d7211352611d9324a527ddf7e5aa29792",
+  "previous_production_commit": "04257d3c258fc3d19891cd3c54e46f070e1a7168",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
   "base_href": "./",
-  "release_cache_version": "f8c31368b105ec92",
-  "main_dart_js_sha256": "f8c31368b105ec92711e2f567d2b699cbe927295f56d34b23544018e1f14030d",
+  "release_cache_version": "f592a19a8083e615",
+  "main_dart_js_sha256": "f592a19a8083e615dbd2f42a999e5d550fb521c880cd3091df0f335bdf39a9cb",
   "database_changes_applied": false,
   "cpanel_activated": false,
   "pending_migrations_in_dependency_order": [
@@ -44,6 +44,17 @@
     }
   ],
   "validation": {
+    "web_release_build": "passed",
+    "focused_flutter_tests": {
+      "plugy": 19,
+      "evox": 19
+    },
+    "chromium_dashboard_navigation_test": 1,
+    "packaged_browser_startup": "passed",
+    "subpath_http_resources": 7
+  },
+  "web_update": "Fix dashboard router lookup after registration or sign-in",
+  "previous_release_validation": {
     "web_release_build": "passed",
     "dart_analysis_errors": 0,
     "focused_flutter_tests": {

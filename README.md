@@ -1,5 +1,8 @@
 # PLUGY EV production web release
 
+The web update fixes an error that could leave the dashboard grey after
+registration or sign-in. The normal cPanel deployment steps apply.
+
 The November 21 build includes the November 17 Plugy ERP edits. Review the
 [release and migration instructions](deployment/2026-11-21/README.md) before
 activating it in cPanel.
