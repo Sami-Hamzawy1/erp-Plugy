@@ -1,3 +1,11 @@
+# PLUGY EV production web release
+
+The November 21 build includes the November 17 Plugy ERP edits. Review the
+[release and migration instructions](deployment/2026-11-21/README.md) before
+activating it in cPanel.
+
+## Previous releases
+
 # PLUGY EV — production web release
 
 Latest release: inventory PDFs, employee branch access, asset photos, Cairo time,
