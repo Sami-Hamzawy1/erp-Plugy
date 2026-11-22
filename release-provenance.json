@@ -2,14 +2,14 @@
   "brand": "plugy",
   "platform": "web",
   "environment": "production",
-  "built_at_utc": "2026-11-22T02:11:55.894034+00:00",
-  "source_revision": "dd7f3ac7aebe4eff6eac38ea6543c6ee12cb3529",
+  "built_at_utc": "2026-11-22T02:27:37.849613+00:00",
+  "source_revision": "4519ef6b28cd0974ba5658aee0856209fb483eca",
   "source_has_uncommitted_changes": false,
-  "previous_production_commit": "975d8fceea204381d8a460e8b93156f9c37f4987",
+  "previous_production_commit": "eac9731f8cb0c469d4db0a20565067dcafa68264",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
   "base_href": "./",
-  "release_cache_version": "65eba23346688142",
-  "main_dart_js_sha256": "65eba23346688142e4edf5778492d0225d05e5ce658babf31dcfebff35f98850",
+  "release_cache_version": "095d386ba89a2cee",
+  "main_dart_js_sha256": "095d386ba89a2ceeb912bc957b9f5275ac2d6155d530bebe6f15d1424a96eb3a",
   "database_changes_applied": false,
   "cpanel_activated": false,
   "pending_migrations_in_dependency_order": [
@@ -50,9 +50,11 @@
   "validation": {
     "web_release_build": "passed",
     "focused_flutter_tests": {
-      "plugy": 42,
-      "evox": 42
+      "plugy": 36,
+      "evox": 36
     },
-    "isolated_sql_editor_packet_and_replay_guard": "passed"
-  }
+    "isolated_database_tests": 6,
+    "subpath_http_resources": 7
+  },
+  "web_update": "Fix installation checkout quantities and show stock shortages before payment"
 }

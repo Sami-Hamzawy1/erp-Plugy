@@ -1,5 +1,15 @@
 # PLUGY EV production web release
 
+Installation checkout uses the saved quotation quantities and shows shared
+installation-material shortages before payment. This checkout update requires
+no additional SQL.
+
+In cPanel, select **Update from Remote**, then **Deploy HEAD Commit**.
+
+## Previous release
+
+# PLUGY EV production web release
+
 This release adds branch stock valuations and minimums, plus the company
 loans dashboard and historical loan tracking.
 
