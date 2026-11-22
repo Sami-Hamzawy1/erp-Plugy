@@ -1,5 +1,18 @@
 # PLUGY EV production web release
 
+This release adds branch stock valuations and minimums, plus the company
+loans dashboard and historical loan tracking.
+
+1. In the Plugy Supabase project `orbovqzenjlyshhiuofx`, run the entire
+   [branch stock and loans SQL update](deployment/2026-11-22/plugy-branch-stock-loans.sql)
+   once in SQL Editor. It checks the November wholesale and corrected loan
+   installment prerequisites and commits both changes together.
+2. In cPanel, select **Update from Remote**, then **Deploy HEAD Commit**.
+
+## Previous release
+
+# PLUGY EV production web release
+
 The web update fixes an error that could leave the dashboard grey after
 registration or sign-in. The normal cPanel deployment steps apply.
 

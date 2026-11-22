@@ -2,14 +2,14 @@
   "brand": "plugy",
   "platform": "web",
   "environment": "production",
-  "built_at_utc": "2026-11-21T02:52:48.306066+00:00",
-  "source_revision": "4931ea1fafeb145d57b838d66e9722842a5368c8",
+  "built_at_utc": "2026-11-22T02:11:55.894034+00:00",
+  "source_revision": "dd7f3ac7aebe4eff6eac38ea6543c6ee12cb3529",
   "source_has_uncommitted_changes": false,
-  "previous_production_commit": "04257d3c258fc3d19891cd3c54e46f070e1a7168",
+  "previous_production_commit": "975d8fceea204381d8a460e8b93156f9c37f4987",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
   "base_href": "./",
-  "release_cache_version": "f592a19a8083e615",
-  "main_dart_js_sha256": "f592a19a8083e615dbd2f42a999e5d550fb521c880cd3091df0f335bdf39a9cb",
+  "release_cache_version": "65eba23346688142",
+  "main_dart_js_sha256": "65eba23346688142e4edf5778492d0225d05e5ce658babf31dcfebff35f98850",
   "database_changes_applied": false,
   "cpanel_activated": false,
   "pending_migrations_in_dependency_order": [
@@ -41,29 +41,18 @@
       "file": "deployment/2026-11-21/20261117030300_loan_installments.sql",
       "sha256": "ccef03b0de836e3a6106c3db6f0f4ffcc2ba60f88813570a51a5158e4dff9cc6",
       "validation": "Passed an isolated database upgrade with the same unrelated authorization audit failure."
+    },
+    {
+      "file": "deployment/2026-11-22/plugy-branch-stock-loans.sql",
+      "sha256": "74102d181c2951364b5bd81c953f94a129697360e1af536f7cced40eb6ee175c"
     }
   ],
   "validation": {
     "web_release_build": "passed",
     "focused_flutter_tests": {
-      "plugy": 19,
-      "evox": 19
+      "plugy": 42,
+      "evox": 42
     },
-    "chromium_dashboard_navigation_test": 1,
-    "packaged_browser_startup": "passed",
-    "subpath_http_resources": 7
-  },
-  "web_update": "Fix dashboard router lookup after registration or sign-in",
-  "previous_release_validation": {
-    "web_release_build": "passed",
-    "dart_analysis_errors": 0,
-    "focused_flutter_tests": {
-      "plugy": 158,
-      "evox": 158
-    },
-    "isolated_database_scenarios": 11,
-    "live_authenticated_workflows_tested": false,
-    "packaged_browser_startup": "passed",
-    "subpath_http_resources": 7
+    "isolated_sql_editor_packet_and_replay_guard": "passed"
   }
 }
