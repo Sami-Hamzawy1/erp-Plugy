@@ -1,5 +1,14 @@
 # PLUGY EV production web release
 
+Installation quotations can add chargers and other products from the fulfillment
+branch. The picker shows that branch’s stock. No additional SQL is required.
+
+In cPanel, select **Update from Remote**, then **Deploy HEAD Commit**.
+
+## Previous release
+
+# PLUGY EV production web release
+
 Installation checkout uses the saved quotation quantities and shows shared
 installation-material shortages before payment. This checkout update requires
 no additional SQL.

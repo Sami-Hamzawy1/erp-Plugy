@@ -2,14 +2,14 @@
   "brand": "plugy",
   "platform": "web",
   "environment": "production",
-  "built_at_utc": "2026-11-22T02:27:37.849613+00:00",
-  "source_revision": "4519ef6b28cd0974ba5658aee0856209fb483eca",
+  "built_at_utc": "2026-11-26T16:38:45.775265+00:00",
+  "source_revision": "35418b1f62a03243088cf1c4be1f68ddd74454fe",
   "source_has_uncommitted_changes": false,
-  "previous_production_commit": "eac9731f8cb0c469d4db0a20565067dcafa68264",
+  "previous_production_commit": "87b74da8520148aadf1e8e1290f6f14ac7edbfdd",
   "supabase_project_ref": "orbovqzenjlyshhiuofx",
   "base_href": "./",
-  "release_cache_version": "095d386ba89a2cee",
-  "main_dart_js_sha256": "095d386ba89a2ceeb912bc957b9f5275ac2d6155d530bebe6f15d1424a96eb3a",
+  "release_cache_version": "be18342f6f154826",
+  "main_dart_js_sha256": "be18342f6f154826320765073f9c38347b22b053e70c59c9bd6b2eb590884555",
   "database_changes_applied": false,
   "cpanel_activated": false,
   "pending_migrations_in_dependency_order": [
@@ -50,11 +50,9 @@
   "validation": {
     "web_release_build": "passed",
     "focused_flutter_tests": {
-      "plugy": 36,
-      "evox": 36
-    },
-    "isolated_database_tests": 6,
-    "subpath_http_resources": 7
+      "plugy": 4,
+      "evox": 4
+    }
   },
-  "web_update": "Fix installation checkout quantities and show stock shortages before payment"
+  "web_update": "Restore Add Product from Stock for installation quotations"
 }
